@@ -51,13 +51,7 @@ service.interceptors.response.use(
         showClose: true,
         message: res.msg,
         type: 'error',
-        duration: 500,
-        onClose: () => {
-          store.dispatch('FedLogOut').then(() => {
-            location.reload()// 为了重新实例化vue-router对象 避免bug
-          })
-        }
-      })
+        duration: 500 })
       return Promise.reject('未登录')
     } else {
       Message({
