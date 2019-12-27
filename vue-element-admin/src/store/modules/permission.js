@@ -58,7 +58,7 @@ const permission = {
         const menus = userPermission.menuList
         // 声明 该角色可用的路由
         let accessedRouters
-        if (role === '管理员') {
+        if (role === '超级管理员') {
           // 如果角色里包含'管理员',那么所有的路由都可以用
           // 其实管理员也拥有全部菜单,这里主要是利用角色判断,节省加载时间
           accessedRouters = asyncRouterMap

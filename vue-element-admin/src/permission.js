@@ -6,9 +6,10 @@ import { getToken } from '@/utils/auth' // 验权
 const whiteList = ['/login', '/404'] // 白名单,不需要登录的路由
 router.beforeEach((to, from, next) => {
   NProgress.start()
+  console.log(getToken() + '==============================' + to.path)
   if (getToken()) {
     // 如果已经登录
-
+    console.log('logined -----------------')
     if (to.path === '/login') {
       next({ path: '/' })
       NProgress.done() // 结束Progress
