@@ -130,6 +130,59 @@ export const constantRouterMap = [
  */
 export const asyncRouterMap = [
   {
+    path: '/group',
+    component: Layout,
+    redirect: '/group/index',
+    children: [
+      {
+        path: 'index',
+        component: () => import('@/views/group/index'),
+        name: 'Group',
+        meta: { title: 'group', icon: 'table', noCache: true }
+      }
+    ]
+  },
+  {
+    path: '/syslog',
+    component: Layout,
+    redirect: '/log/index',
+    name: '系统日志管理',
+    meta: { title: '系统日志管理', icon: 'table' },
+    noDropdown: true,
+    children: [
+      {
+        path: 'index',
+        name: '日志管理',
+        component: import('@/views/log/index'),
+        meta: { title: '日志管理', icon: 'table' },
+        menu: 'syslog'
+      }
+    ]
+  },
+  {
+    path: '/user',
+    component: Layout,
+    redirect: '/user/',
+    name: '',
+    meta: { title: '用户权限', icon: 'table' },
+    children: [
+      {
+        path: '',
+        name: '用户列表',
+        component: () => import('@/views/user/user'),
+        meta: { title: '用户列表', icon: 'user' },
+        menu: 'user'
+      },
+      {
+        path: 'role',
+        name: '权限管理',
+        component: () => import('@/views/user/role'),
+        meta: { title: '权限管理', icon: 'password' },
+        menu: 'role'
+      }
+    ]
+  },
+  {
     path: '/permission',
     component: Layout,
     redirect: '/permission/page',
