@@ -63,7 +63,11 @@ export default {
     i18n: '国际化',
     externalLink: '外链',
     profile: '个人中心',
-    group: '组织管理'
+    group: '组织管理',
+    syslog: '系统日志管理',
+    userManage: '用户权限',
+    user: '用户管理',
+    role: '权限管理'
   },
   navbar: {
     dashboard: '首页',

@@ -146,15 +146,15 @@ export const asyncRouterMap = [
     path: '/syslog',
     component: Layout,
     redirect: '/log/index',
-    name: '系统日志管理',
-    meta: { title: '系统日志管理', icon: 'table' },
+    // name: '系统日志管理',
+    // meta: { title: 'syslog', icon: 'table' },
     noDropdown: true,
     children: [
       {
         path: 'index',
-        name: '日志管理',
-        component: import('@/views/log/index'),
-        meta: { title: '日志管理', icon: 'table' },
+        name: 'Syslog',
+        component: () => import('@/views/log/index'),
+        meta: { title: 'syslog', icon: 'table' },
         menu: 'syslog'
       }
     ]
@@ -163,21 +163,21 @@ export const asyncRouterMap = [
     path: '/user',
     component: Layout,
     redirect: '/user/',
-    name: '',
-    meta: { title: '用户权限', icon: 'table' },
+    name: 'userManage',
+    meta: { title: 'userManage', icon: 'table' },
     children: [
       {
         path: '',
-        name: '用户列表',
-        component: () => import('@/views/user/user'),
-        meta: { title: '用户列表', icon: 'user' },
+        name: 'user',
+        component: () => import('@/views/userManage/user'),
+        meta: { title: 'user', icon: 'user' },
         menu: 'user'
       },
       {
         path: 'role',
-        name: '权限管理',
-        component: () => import('@/views/user/role'),
-        meta: { title: '权限管理', icon: 'password' },
+        name: 'role',
+        component: () => import('@/views/userManage/role'),
+        meta: { title: 'role', icon: 'password' },
         menu: 'role'
       }
     ]
@@ -199,8 +199,8 @@ export const asyncRouterMap = [
         component: () => import('@/views/permission/page'),
         name: 'PagePermission',
         meta: {
-          title: 'pagePermission',
-          roles: ['admin'] // or you can only set roles in sub nav
+          title: 'pagePermission'
+          // roles: ['admin'] // or you can only set roles in sub nav
         }
       },
       {

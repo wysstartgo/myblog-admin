@@ -126,7 +126,7 @@ export default {
         roleId: '',
         permissions: []
       },
-      adminName: '管理员'
+      adminName: '超级管理员'
     }
   },
   created() {
