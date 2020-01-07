@@ -70,13 +70,13 @@
         <el-form-item v-else label="新密码">
           <el-input v-model="tempUser.password" type="password" placeholder="不填则表示不修改" />
         </el-form-item>
-        <el-form-item v-if="hasPerm('group:list')" label="所属店铺" required>
-          <el-select v-model="tempUser.shopId" placeholder="请选择" @focus="getAllGroups">
+        <el-form-item v-if="hasPerm('group:list')" label="所属组织" required>
+          <el-select v-model="tempUser.groupId" placeholder="请选择" @focus="getAllGroups">
             <el-option
               v-for="item in groups"
-              :key="item.shopId"
-              :label="item.shopName"
-              :value="item.shopId"
+              :key="item.groupId"
+              :label="item.groupName"
+              :value="item.groupId"
             />
           </el-select>
         </el-form-item>
@@ -131,8 +131,8 @@ export default {
         password: '',
         nickname: '',
         roleId: '',
-        shopId: '',
-        shopName: '',
+        groupId: '',
+        groupName: '',
         userId: ''
       }
     }
@@ -217,8 +217,8 @@ export default {
       this.tempUser.nickname = user.nickname
       this.tempUser.roleId = user.roleId
       this.tempUser.userId = user.userId
-      this.tempUser.shopId = user.shopId
-      this.tempUser.shopName = user.shopName
+      this.tempUser.groupId = user.groupId
+      this.tempUser.groupName = user.groupName
       this.tempUser.deleteStatus = '1'
       this.tempUser.password = ''
       this.dialogStatus = 'update'

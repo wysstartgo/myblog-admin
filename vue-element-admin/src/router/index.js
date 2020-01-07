@@ -138,6 +138,7 @@ export const asyncRouterMap = [
         path: 'index',
         component: () => import('@/views/group/index'),
         name: 'Group',
+        menu: 'group',
         meta: { title: 'group', icon: 'table', noCache: true }
       }
     ]

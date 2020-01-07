@@ -179,7 +179,7 @@ export default {
               } else {
                 this.$message.error('账号或密码错误')
               }
-              this.$router.push({ path: this.redirect || '/', query: this.otherQuery })
+              // this.$router.push({ path: this.redirect || '/', query: this.otherQuery })
             })
             .catch(() => {
               this.loading = false

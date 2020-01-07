@@ -48,7 +48,7 @@
       </el-table-column>
       <el-table-column v-if="hasPerm('role:update') ||hasPerm('role:delete') " align="center" label="管理" width="220">
         <template slot-scope="scope">
-          <div v-if="scope.row.roleName!='管理员'">
+          <div v-if="scope.row.roleName!='超级管理员'">
             <el-button v-if="hasPerm('role:update')" type="primary" icon="edit" @click="showUpdate(scope.$index)">修改
             </el-button>
             <el-button
@@ -75,29 +75,16 @@
           <el-input v-model="tempRole.roleName" type="text" style="width: 250px;" />
         </el-form-item>
         <el-form-item label="菜单&权限" required>
-          <div v-for=" (menu,_index) in allPermission" :key="menu.menuName">
-            <span style="width: 100px;display: inline-block;">
-              <el-button
-                :type="isMenuNone(_index)?'':(isMenuAll(_index)?'success':'primary')"
-                size="mini"
-                style="width:80px;"
-                @click="checkAll(_index)"
-              >{{ menu.menuName }}</el-button>
-            </span>
-            <div style="display: inline-block;margin-left:20px;">
-              <el-checkbox-group v-model="tempRole.permissions">
-                <el-checkbox
-                  v-for="perm in menu.permissions"
-                  :key="perm.id"
-                  :label="perm.id"
-                  @change="checkRequired(perm,_index)"
-                >
-                  <span :class="{requiredPerm:perm.requiredPerm===1}">{{ perm.permissionName }}</span>
-                </el-checkbox>
-              </el-checkbox-group>
-            </div>
-          </div>
-          <p style="color:#848484;">说明:红色权限为对应菜单内的必选权限</p>
+          <el-tree
+                    ref="tree"
+                   :check-strictly="checkStrictly"
+                   :data="allPermission"
+                    :props="defaultProps"
+                    show-checkbox
+                    :default-checked-keys="defaultCheckedKeys"
+                    :default-expanded-keys="defaultExpandedKeys"
+                    node-key="id"
+                    class="permission-tree" />
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
@@ -114,9 +101,12 @@ export default {
     return {
       list: [], // 表格的数据
       allPermission: [],
+      defaultCheckedKeys: [], // 编辑的时候需要设置进去
+      defaultExpandedKeys: [],
       listLoading: false, // 数据加载等待动画
       dialogStatus: 'create',
       dialogFormVisible: false,
+      checkStrictly: false,
       textMap: {
         update: '编辑',
         create: '新建角色'
@@ -125,6 +115,10 @@ export default {
         roleName: '',
         roleId: '',
         permissions: []
+      },
+      defaultProps: {
+        children: 'children',
+        label: 'menuName'
       },
       adminName: '超级管理员'
     }
@@ -140,7 +134,7 @@ export default {
         url: '/user/listAllPermission',
         method: 'get'
       }).then(data => {
-        this.allPermission = data.list
+        this.allPermission = data.data
       })
     },
     getList() {
@@ -174,9 +168,13 @@ export default {
       for (let i = 0; i < role.menus.length; i++) {
         const perm = role.menus[i].permissions
         for (let j = 0; j < perm.length; j++) {
-          this.tempRole.permissions.push(perm[j].permissionId)
+          // console.log(perm[j])
+          if (perm[j].children === 0) {
+            this.tempRole.permissions.push(perm[j].permissionId)
+          }
         }
       }
+      this.defaultCheckedKeys = this.tempRole.permissions
       this.dialogStatus = 'update'
       this.dialogFormVisible = true
     },
@@ -184,6 +182,7 @@ export default {
       if (!this.checkRoleNameUnique()) {
         return
       }
+      this.tempRole.permissions = this.$refs.tree.getCheckedKeys()
       if (!this.checkPermissionNum()) {
         return
       }
@@ -201,6 +200,7 @@ export default {
       if (!this.checkRoleNameUnique(this.tempRole.roleId)) {
         return
       }
+      this.tempRole.permissions = this.$refs.tree.getCheckedKeys()
       if (!this.checkPermissionNum()) {
         return
       }
@@ -259,99 +259,12 @@ export default {
         }).catch(e => {
         })
       })
-    },
-    isMenuNone(_index) {
-      // 判断本级菜单内的权限是否一个都没选
-      const menu = this.allPermission[_index].permissions
-      let result = true
-      for (let j = 0; j < menu.length; j++) {
-        if (this.tempRole.permissions.indexOf(menu[j].id) > -1) {
-          result = false
-          break
-        }
-      }
-      return result
-    },
-    isMenuAll(_index) {
-      // 判断本级菜单内的权限是否全选了
-      const menu = this.allPermission[_index].permissions
-      let result = true
-      for (let j = 0; j < menu.length; j++) {
-        if (this.tempRole.permissions.indexOf(menu[j].id) < 0) {
-          result = false
-          break
-        }
-      }
-      return result
-    },
-    checkAll(_index) {
-      // 点击菜单   相当于全选按钮
-      const v = this
-      if (v.isMenuAll(_index)) {
-        // 如果已经全选了,则全部取消
-        v.noPerm(_index)
-      } else {
-        // 如果尚未全选,则全选
-        v.allPerm(_index)
-      }
-    },
-    allPerm(_index) {
-      // 全部选中
-      const menu = this.allPermission[_index].permissions
-      for (let j = 0; j < menu.length; j++) {
-        this.addUnique(menu[j].id, this.tempRole.permissions)
-      }
-    },
-    noPerm(_index) {
-      // 全部取消选中
-      const menu = this.allPermission[_index].permissions
-      for (let j = 0; j < menu.length; j++) {
-        const idIndex = this.tempRole.permissions.indexOf(menu[j].id)
-        if (idIndex > -1) {
-          this.tempRole.permissions.splice(idIndex, 1)
-        }
-      }
-    },
-    addUnique(val, arr) {
-      // 数组内防重复地添加元素
-      const _index = arr.indexOf(val)
-      if (_index < 0) {
-        arr.push(val)
-      }
-    },
-    checkRequired(_perm, _index) {
-      // 本方法会在勾选状态改变之后触发
-      const permId = _perm.id
-      if (this.tempRole.permissions.indexOf(permId) > -1) {
-        // 选中事件
-        // 如果之前未勾选本权限,现在勾选完之后,tempRole里就会包含本id
-        // 那么就要将必选的权限勾上
-        this.makeReuqiredPermissionChecked(_index)
-      } else {
-        // 取消选中事件
-        if (_perm.requiredPerm === 1) {
-          // 如果是必勾权限,就把本菜单的权限全部移出
-          // (其实也可以提示用户本权限是菜单里的必选,请先取消勾选另外几个权限,交互太麻烦,此处就直接全部取消选中了)
-          this.noPerm(_index)
-        }
-      }
-    },
-    makeReuqiredPermissionChecked(_index) {
-      // 将本菜单必选的权限勾上
-      const menu = this.allPermission[_index].permissions
-      for (let j = 0; j < menu.length; j++) {
-        const perm = menu[j]
-        if (perm.requiredPerm === 1) {
-          // 找到本菜单的必选权限,将其勾上
-          this.addUnique(perm.id, this.tempRole.permissions)
-        }
-      }
     }
   }
 }
 </script>
 <style scoped>
-  .requiredPerm {
+  .requiredPermission {
     color: #ff0e13;
   }
 </style>

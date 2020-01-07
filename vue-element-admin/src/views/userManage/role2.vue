@@ -92,7 +92,7 @@
                   :label="perm.id"
                   @change="checkRequired(perm,_index)"
                 >
-                  <span :class="{requiredPerm:perm.requiredPerm===1}">{{ perm.permissionName }}</span>
+                  <span :class="{requiredPermission:perm.requiredPermission===1}">{{ perm.permissionName }}</span>
                 </el-checkbox>
               </el-checkbox-group>
             </div>
@@ -329,7 +329,7 @@ export default {
         this.makeReuqiredPermissionChecked(_index)
       } else {
         // 取消选中事件
-        if (_perm.requiredPerm === 1) {
+        if (_perm.requiredPermission === 1) {
           // 如果是必勾权限,就把本菜单的权限全部移出
           // (其实也可以提示用户本权限是菜单里的必选,请先取消勾选另外几个权限,交互太麻烦,此处就直接全部取消选中了)
           this.noPerm(_index)
@@ -341,7 +341,7 @@ export default {
       const menu = this.allPermission[_index].permissions
       for (let j = 0; j < menu.length; j++) {
         const perm = menu[j]
-        if (perm.requiredPerm === 1) {
+        if (perm.requiredPermission === 1) {
           // 找到本菜单的必选权限,将其勾上
           this.addUnique(perm.id, this.tempRole.permissions)
         }
@@ -351,7 +351,7 @@ export default {
 }
 </script>
 <style scoped>
-  .requiredPerm {
+  .requiredPermission {
     color: #ff0e13;
   }
 </style>
