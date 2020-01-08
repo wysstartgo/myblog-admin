@@ -24,7 +24,7 @@ service.interceptors.request.use(
       // ['X-Token'] is a custom headers key
       // please modify it according to the actual situation
       console.log('-----------------------' + getToken())
-      config.headers['X-Token'] = getToken()
+      config.headers['admin-token'] = getToken()
     }
     return config
   },

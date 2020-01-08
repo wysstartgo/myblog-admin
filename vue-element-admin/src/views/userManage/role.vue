@@ -3,7 +3,7 @@
     <div class="filter-container">
       <el-form>
         <el-form-item>
-          <el-button v-if="hasPerm('user:add')" type="success" icon="plus" @click="showCreate">添加角色
+          <el-button v-if="hasPerm('role:add')" type="success" icon="plus" @click="showCreate">添加角色
           </el-button>
         </el-form-item>
       </el-form>
@@ -75,6 +75,7 @@
           <el-input v-model="tempRole.roleName" type="text" style="width: 250px;" />
         </el-form-item>
         <el-form-item label="菜单&权限" required>
+          <p style="color:#848484;">说明:请注意对应菜单内的必选权限(一般列表项为必选权限)</p>
           <el-tree
                     ref="tree"
                    :check-strictly="checkStrictly"

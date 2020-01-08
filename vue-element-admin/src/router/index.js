@@ -224,7 +224,50 @@ export const asyncRouterMap = [
       }
     ]
   },
-
+  {
+    path: '/article',
+    component: Layout,
+    redirect: '/article/poem/list',
+    name: 'Article',
+    meta: {
+      title: 'article',
+      icon: 'list'
+    },
+    children: [
+      // {
+      //   path: 'create',
+      //   component: () => import('@/views/article/create'),
+      //   name: 'CreateArticle',
+      //   meta: { title: 'createArticle', icon: 'edit' }
+      // },
+      {
+        path: 'poem/edit/:id(\\d+)',
+        component: () => import('@/views/article/poem/edit'),
+        name: 'EditPoem',
+        meta: { title: 'editPoem', noCache: true, activeMenu: '/article/poem/list' },
+        hidden: true
+      },
+      {
+        path: 'poem/list',
+        component: () => import('@/views/article/poem/index'),
+        name: '诗词列表',
+        meta: { title: 'poemList', icon: 'list' }
+      },
+      {
+        path: 'simple/edit/:id(\\d+)',
+        component: () => import('@/views/article/simple/edit'),
+        name: 'EditArticle',
+        meta: { title: 'editArticle', noCache: true, activeMenu: '/article/simple/list' },
+        hidden: true
+      },
+      {
+        path: 'simple/list',
+        component: () => import('@/views/article/simple/index'),
+        name: '文章列表',
+        meta: { title: 'articleList', icon: 'list' }
+      }
+    ]
+  },
   {
     path: '/icon',
     component: Layout,
