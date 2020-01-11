@@ -265,6 +265,12 @@ export const asyncRouterMap = [
         component: () => import('@/views/article/simple/index'),
         name: '文章列表',
         meta: { title: 'articleList', icon: 'list' }
+      },
+      {
+        path: 'simple/create',
+        component: () => import('@/views/article/simple/create'),
+        name: '文章创建',
+        meta: { title: 'createArticle', icon: 'list' }
       }
     ]
   },

@@ -53,7 +53,8 @@ service.interceptors.response.use(
         message: res.msg,
         type: 'error',
         duration: 500 })
-      return Promise.reject('未登录')
+      this.$route.push({ path: '/login' })
+      // return Promise.reject('未登录')
     } else {
       Message({
         message: res.msg,

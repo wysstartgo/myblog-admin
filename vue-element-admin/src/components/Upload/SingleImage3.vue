@@ -1,13 +1,14 @@
 <template>
   <div class="upload-container">
     <el-upload
-      :data="dataObj"
-      :multiple="false"
-      :show-file-list="false"
+      :limit=limitNum
+      :on-exceed="exceedFile"
+      :before-upload="beforeUpload"
       :on-success="handleImageSuccess"
       class="image-uploader"
+      :on-error="handleError"
       drag
-      action="https://httpbin.org/post"
+      :action="postUrl"
     >
       <i class="el-icon-upload" />
       <div class="el-upload__text">
@@ -34,7 +35,6 @@
 </template>
 
 <script>
-import { getToken } from '@/api/qiniu'
 
 export default {
   name: 'SingleImageUpload3',
@@ -46,9 +46,16 @@ export default {
   },
   data() {
     return {
+      postUrl: '',
       tempUrl: '',
-      dataObj: { token: '', key: '' }
+      limitNum: 1
     }
+  },
+  created() {
+    this.postUrl = process.env.VUE_APP_BASE_API + '/upload'
+    // console.log('----------------------------')
+    // console.log(this.postUrl)
+    // console.log('----------------------------')
   },
   computed: {
     imageUrl() {
@@ -62,24 +69,33 @@ export default {
     emitInput(val) {
       this.$emit('input', val)
     },
-    handleImageSuccess(file) {
-      this.emitInput(file.files.file)
-    },
-    beforeUpload() {
-      const _self = this
-      return new Promise((resolve, reject) => {
-        getToken().then(response => {
-          const key = response.data.qiniu_key
-          const token = response.data.qiniu_token
-          _self._data.dataObj.token = token
-          _self._data.dataObj.key = key
-          this.tempUrl = response.data.qiniu_url
-          resolve(true)
-        }).catch(err => {
-          console.log(err)
-          reject(false)
-        })
+    exceedFile(files, fileList) {
+      this.$notify.warning({
+        title: '警告',
+        message: '只能选择 ${this.limitNum} 个文件，当前共选择了 ${files.length + fileList.length} 个'
       })
+    },
+    handleImageSuccess(res, file, fileList) {
+      this.emitInput(res.data)
+      this.$message.success({
+        title: '成功',
+        message: `图片上传成功`
+      })
+    },
+    handleError(file) {
+      this.$message.error({
+        title: '错误提示',
+        message: '图片上传失败!'
+      })
+    },
+    beforeUpload(file) {
+      const imageSize = file.size / 1024 / 1024
+      if (imageSize > 10) {
+        this.$notify.warning({
+          title: '警告',
+          message: '文件大小不能超过10M'
+        })
+      }
     }
   }
 }

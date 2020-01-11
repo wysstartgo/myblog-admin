@@ -5,9 +5,9 @@
         <el-button v-loading="loading" style="margin-left: 10px;" type="success" @click="submitForm">
           Publish
         </el-button>
-        <el-button v-loading="loading" type="warning" @click="draftForm">
+        <!--<el-button v-loading="loading" type="warning" @click="draftForm">
           Draft
-        </el-button>
+        </el-button>-->
       </sticky>
 
       <div class="createPost-main-container">
@@ -36,7 +36,7 @@
                 <el-col :span="6">
                   <el-form-item label-width="90px" label="Importance:" class="postInfo-container-item">
                     <el-rate
-                      v-model="postForm.importance"
+                      v-model="importance"
                       :max="3"
                       :colors="['#99A9BF', '#F7BA2A', '#FF9900']"
                       :low-threshold="1"
@@ -78,8 +78,7 @@ const defaultForm = {
   // status: 'draft',
   title: '', // 文章题目
   content: '', // 文章内容
-  id: undefined,
-  importance: 0
+  id: undefined
 }
 
 export default {
@@ -104,6 +103,7 @@ export default {
       }
     }
     return {
+      importance: 3,
       postForm: Object.assign({}, defaultForm),
       loading: false,
       rules: {

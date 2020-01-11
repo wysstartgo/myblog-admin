@@ -5,9 +5,9 @@
         <el-button v-loading="loading" style="margin-left: 10px;" type="success" @click="submitForm">
           Publish
         </el-button>
-        <el-button v-loading="loading" type="warning" @click="draftForm">
-          Draft
-        </el-button>
+<!--        <el-button v-loading="loading" type="warning" @click="draftForm">-->
+<!--          Draft-->
+<!--        </el-button>-->
       </sticky>
 
       <div class="createPost-main-container">
@@ -29,14 +29,14 @@
 
                 <el-col :span="10">
                   <el-form-item label-width="120px" label="Publish Time:" class="postInfo-container-item">
-                    <el-date-picker v-model="postForm.createTime" type="datetime" format="yyyy-MM-dd HH:mm:ss" placeholder="Select date and time" />
+                    <el-date-picker v-model="postForm.createTime" value-format="yyyy-MM-dd HH:mm:ss" type="datetime" format="yyyy-MM-dd HH:mm:ss" placeholder="Select date and time" />
                   </el-form-item>
                 </el-col>
 
                 <el-col :span="6">
                   <el-form-item label-width="90px" label="Importance:" class="postInfo-container-item">
                     <el-rate
-                      v-model="postForm.importance"
+                      v-model="importance"
                       :max="3"
                       :colors="['#99A9BF', '#F7BA2A', '#FF9900']"
                       :low-threshold="1"
@@ -72,14 +72,13 @@ import Tinymce from '@/components/Tinymce'
 import Upload from '@/components/Upload/SingleImage3'
 import MDinput from '@/components/MDinput'
 import Sticky from '@/components/Sticky' // 粘性header组件
-import { fetchArticle, updateArticle } from '@/api/article'
+import { fetchArticle, updateArticle, createArticle } from '@/api/article'
 
 const defaultForm = {
   // status: 'draft',
   title: '', // 文章题目
   content: '', // 文章内容
-  id: undefined,
-  importance: 0
+  id: undefined
 }
 
 export default {
@@ -104,6 +103,7 @@ export default {
       }
     }
     return {
+      importance: 3,
       postForm: Object.assign({}, defaultForm),
       loading: false,
       rules: {
@@ -175,16 +175,28 @@ export default {
       this.$refs.postForm.validate(valid => {
         if (valid) {
           this.loading = true
-          updateArticle(this.postForm).then(() => {
-            this.$notify({
-              title: '成功',
-              message: '发布文章成功',
-              type: 'success',
-              duration: 2000
+          if (this.isEdit) {
+            updateArticle(this.postForm).then(() => {
+              this.$notify({
+                title: '成功',
+                message: '更新文章成功',
+                type: 'success',
+                duration: 2000
+              })
+              this.loading = false
+              // this.$router.push({ path: '/article/detail/' + this.postForm.id })
             })
-            this.loading = false
-            // this.$router.push({ path: '/article/detail/' + this.postForm.id })
-          })
+          } else {
+            createArticle(this.postForm).then(() => {
+              this.$notify({
+                title: '成功',
+                message: '发布文章成功',
+                type: 'success',
+                duration: 2000
+              })
+              this.loading = false
+            })
+          }
         } else {
           return false
         }
